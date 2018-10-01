@@ -6,3 +6,7 @@ node_modules/
 
 .vs/
 *.user
+
+## Misc. ##
+
+*.log

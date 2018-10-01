@@ -23,9 +23,6 @@
         "promise"
     ],
     "main": "index.js",
-    "files": [
-        "index.js"
-    ],
     "scripts": {},
     "dependencies": {
         "is-image": "2.0.0",
