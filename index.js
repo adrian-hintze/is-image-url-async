@@ -18,7 +18,7 @@ function requestUrlAndLookForImageHeader(url, timeout) {
                 const ext = imageType(chunk);
                 resolve(!!ext);
             });
-        }).on('error', e => reject(e));
+        }).on('error', error => reject(error));
     });
 }
 
@@ -37,7 +37,7 @@ function isUrlAnImageUrl(url, timeout) {
 }
 
 function isImageUrl(url, timeout) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         if (!url) {
             return resolve(false);
         }
