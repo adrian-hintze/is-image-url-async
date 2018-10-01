@@ -25,6 +25,7 @@
     "main": "index.js",
     "scripts": {},
     "dependencies": {
+        "image-type": "3.0.0",
         "is-image": "2.0.0",
         "is-url": "1.2.4",
         "request": "2.88.0"

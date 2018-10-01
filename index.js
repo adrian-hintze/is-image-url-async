@@ -1,32 +1,25 @@
 'use strict';
 
-const util = require('util');
+const http = require('http');
 const urlLib = require('url');
-const request = require('request');
+const imageType = require('image-type');
 const isImage = require('is-image');
 const isUrl = require('is-url');
-
-const promisifiedGet = util.promisify(request.get);
-
-function handleResponse(response) {
-    return new Promise((resolve) => {
-        if (!response || !response.headers) {
-            return resolve(false);
-        }
-
-        const contentType = response.headers['content-type'];
-        const hasImageContentType = contentType && contentType.search(/^image\//) !== -1;
-        resolve(hasImageContentType);
-    });
-}
 
 function requestUrlAndLookForImageHeader(url, timeout) {
     if (!timeout) {
         timeout = 20*1000;
     }
 
-    return promisifiedGet(url, { timeout })
-        .then(response => handleResponse(response));
+    return new Promise((resolve, reject) => {
+        http.get(url, { timeout }, (res) => {
+            res.once('data', (chunk) => {
+                res.destroy();
+                const ext = imageType(chunk);
+                resolve(!!ext);
+            });
+        }).on('error', e => reject(e));
+    });
 }
 
 function isUrlAnImageUrl(url, timeout) {
