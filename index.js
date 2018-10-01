@@ -1,6 +1,7 @@
 'use strict';
 
 const http = require('http');
+const https = require('https');
 const urlLib = require('url');
 const imageType = require('image-type');
 const isImage = require('is-image');
@@ -12,7 +13,9 @@ function requestUrlAndLookForImageHeader(url, timeout) {
     }
 
     return new Promise((resolve, reject) => {
-        http.get(url, { timeout }, (res) => {
+        const urlObj = new urlLib.URL(url);
+        const protocol = urlObj.protocol === 'http' ? http : https;
+        protocol.get(url, { timeout }, (res) => {
             res.once('data', (chunk) => {
                 res.destroy();
                 const ext = imageType(chunk);
