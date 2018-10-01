@@ -1,68 +1,62 @@
 'use strict';
 
+const util = require('util');
 const urlLib = require('url');
 const request = require('request');
 const isImage = require('is-image');
 const isUrl = require('is-url');
 
-function handleRequestResult(error, response, callback) {
-  if (error || !response || !response.headers) {
-    callback(false);
-    return;
-  }
+const promisifiedGet = util.promisify(request.get);
 
-  const contentType = response.headers['content-type'];
+function handleResponse(response) {
+    return new Promise((resolve) => {
+        if (!response || !response.headers) {
+            return resolve(false);
+        }
 
-  const hasImageContentType = contentType && contentType.search(/^image\//) !== -1;
-
-  callback(hasImageContentType);
-}
-
-function requestUrlAndLookForImageHeader(url, callback, timeout) {
-  if (!timeout) {
-    timeout = 20 * 1000;
-  }
-
-  try {
-    request.get(url, {timeout}, (error, response) => {
-      handleRequestResult(error, response, callback);
+        const contentType = response.headers['content-type'];
+        const hasImageContentType = contentType && contentType.search(/^image\//) !== -1;
+        resolve(hasImageContentType);
     });
-  } catch (err) {
-    callback(false);
-  }
 }
 
-function isUrlAnImageUrl(url, callback, timeout) {
-  const urlObject = urlLib.parse(url);
+function requestUrlAndLookForImageHeader(url, timeout) {
+    if (!timeout) {
+        timeout = 20*1000;
+    }
 
-  const path = urlObject.pathname;
-
-  if (isImage(path)) {
-    callback(true);
-    return;
-  }
-
-  requestUrlAndLookForImageHeader(url, callback, timeout);
+    return promisifiedGet(url, { timeout })
+        .then(response => handleResponse(response));
 }
 
-function isAnImageUrl(url, callback, timeout) {
-  if (!callback) {
-    throw new Error('Callback must be set to receive the result of the image check.');
-  }
+function isUrlAnImageUrl(url, timeout) {
+    return new Promise((resolve, reject) => {
+        const urlObject = urlLib.parse(url);
+        const path = urlObject.pathname;
+        if (isImage(path)) {
+            return resolve(true);
+        }
 
-  if (!url) {
-    callback(false);
-    return;
-  }
-
-  if (!isUrl(url)) {
-    const result = isImage(url);
-
-    callback(result);
-    return;
-  }
-
-  isUrlAnImageUrl(url, callback, timeout);
+        requestUrlAndLookForImageHeader(url, timeout)
+            .then(result => resolve(result))
+            .catch(error => reject(error));
+    });
 }
 
-module.exports = isAnImageUrl;
+function isImageUrl(url, timeout) {
+    return new Promise((resolve) => {
+        if (!url) {
+            return resolve(false);
+        }
+
+        if (!isUrl(url)) {
+            return resolve(isImage(url));
+        }
+
+        isUrlAnImageUrl(url, timeout)
+            .then(result => resolve(result))
+            .catch(error => reject(error));
+    });  
+}
+
+module.exports = isImageUrl;

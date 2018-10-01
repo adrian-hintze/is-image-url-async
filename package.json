@@ -1,56 +1,36 @@
 {
-  "name": "is-an-image-url",
-  "version": "1.0.2",
-  "description": "This package was originally created as an async replacement for is-image-url.  I was using that one but my sync security scanner said there was issue with one of the dependencies.  I posted a pull request but a new version never got published, so onward and upward.  The other lib was synchronous, I figured I'd make an async version.",
-  "main": "index.js",
-  "scripts": {
-    "test": "snyk test && xo && nyc ava",
-    "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "travis-after-success": "nyc report --reporter=text-lcov | coveralls"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/m4bwav/is-an-image-url.git"
-  },
-  "keywords": [
-    "image",
-    "url"
-  ],
-  "files": [
-    "index.js",
-    "cli.js",
-    "lib"
-  ],
-  "bin": "cli.js",
-  "author": "Mark Rogers (http://www.markdavidrogers.com/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/m4bwav/is-an-image-url/issues"
-  },
-  "homepage": "https://github.com/m4bwav/is-an-image-url#readme",
-  "dependencies": {
-    "is-image": "^2.0.0",
-    "is-url": "^1.2.2",
-    "meow": "3.7.0",
-    "request": "^2.81.x"
-  },
-  "devDependencies": {
-    "ava": "^0.19.1",
-    "execa": "^0.6.3",
-    "coveralls": "^2.11.9",
-    "codecov.io": "^0.1.6",
-    "nyc": "^10.2.0",
-    "xo": "^0.18.1",
-    "snyk": "^1.29.0"
-  },
-  "xo": {
-    "rules": {
-      "xo/no-process-exit": "off",
-      "linebreak-style": "off",
-      "indent": [
-        "error",
-        2
-      ]
-    }
-  }
+    "name": "is-image-url-async",
+    "version": "1.0.0",
+    "description": "Check if a URL represents an image asynchronously using promises.",
+    "author": {
+        "name": "Adrian Hintze",
+        "email": "hintze.adrian@gmail.com",
+        "url": "https://github.com/adrian-hintze/"
+    },
+    "license": "MIT",
+    "homepage": "https://github.com/adrian-hintze/is-image-url-async#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/adrian-hintze/is-image-url-async.git"
+    },
+    "bugs": {
+        "url": "https://github.com/adrian-hintze/is-image-url-async/issues"
+    },
+    "keywords": [
+        "image",
+        "url",
+        "async",
+        "promise"
+    ],
+    "main": "index.js",
+    "files": [
+        "index.js"
+    ],
+    "scripts": {},
+    "dependencies": {
+        "is-image": "2.0.0",
+        "is-url": "1.2.4",
+        "request": "2.88.0"
+    },
+    "devDependencies": {}
 }
