@@ -1,6 +1,6 @@
 {
     "name": "is-image-url-async",
-    "version": "1.1.1",
+    "version": "1.2.1",
     "description": "Check if a URL represents an image asynchronously using promises.",
     "author": {
         "name": "Adrian Hintze",
