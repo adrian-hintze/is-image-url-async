@@ -2,7 +2,7 @@
 
 Checks to see if a URL points to an image and returns a string containing the appropiate extension.
 
-[![npm package](https://nodei.co/npm/is-an-image-url.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/is-image-url-async/)
+[![npm package](https://nodei.co/npm/is-image-url-async.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/is-image-url-async/)
 
 ## Installation
 
