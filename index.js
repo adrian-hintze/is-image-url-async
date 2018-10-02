@@ -15,10 +15,15 @@ function requestUrlAndLookForImageHeader(url, timeout) {
 
     return new Promise((resolve, reject) => {
         const urlObj = new urlLib.URL(url);
+        if (urlObj.protocol !== 'http' && urlObj.protocol !== 'https') {
+            return reject(`Unsupported protocol ${urlObj.protocol}.`);
+        }
+
         const protocol = urlObj.protocol === 'http' ? http : https;
         protocol.get(url, { timeout }, (res) => {
             res.once('data', (chunk) => {
                 res.destroy();
+
                 const imgInfo = imageType(chunk);
                 if (!imgInfo) {
                     return resolve();
@@ -32,8 +37,8 @@ function requestUrlAndLookForImageHeader(url, timeout) {
 
 function isUrlAnImageUrl(url, timeout) {
     return new Promise((resolve, reject) => {
-        const urlObject = urlLib.parse(url);
-        const pathname = urlObject.pathname;
+        const urlObj = new urlLib.URL(url);
+        const pathname = urlObj.pathname;
         if (isImage(pathname)) {
             const ext = path.extname(pathname).substring(1);
             return resolve(ext);
@@ -52,7 +57,7 @@ function isImageUrl(url, timeout) {
         }
 
         if (!isUrl(url)) {
-            return resolve(isImage(url));
+            return resolve();
         }
 
         isUrlAnImageUrl(url, timeout)
