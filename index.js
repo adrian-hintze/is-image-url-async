@@ -2,6 +2,7 @@
 
 const http = require('http');
 const https = require('https');
+const path = require('path');
 const urlLib = require('url');
 const imageType = require('image-type');
 const isImage = require('is-image');
@@ -18,8 +19,12 @@ function requestUrlAndLookForImageHeader(url, timeout) {
         protocol.get(url, { timeout }, (res) => {
             res.once('data', (chunk) => {
                 res.destroy();
-                const ext = imageType(chunk);
-                resolve(!!ext);
+                const imgInfo = imageType(chunk);
+                if (!imgInfo) {
+                    return resolve();
+                }
+
+                resolve(imgInfo.ext);
             });
         }).on('error', error => reject(error));
     });
@@ -28,9 +33,10 @@ function requestUrlAndLookForImageHeader(url, timeout) {
 function isUrlAnImageUrl(url, timeout) {
     return new Promise((resolve, reject) => {
         const urlObject = urlLib.parse(url);
-        const path = urlObject.pathname;
-        if (isImage(path)) {
-            return resolve(true);
+        const pathname = urlObject.pathname;
+        if (isImage(pathname)) {
+            const ext = path.extname(pathname).substring(1);
+            return resolve(ext);
         }
 
         requestUrlAndLookForImageHeader(url, timeout)
@@ -42,7 +48,7 @@ function isUrlAnImageUrl(url, timeout) {
 function isImageUrl(url, timeout) {
     return new Promise((resolve, reject) => {
         if (!url) {
-            return resolve(false);
+            return resolve();
         }
 
         if (!isUrl(url)) {
