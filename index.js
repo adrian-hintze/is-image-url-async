@@ -15,11 +15,11 @@ function requestUrlAndLookForImageHeader(url, timeout) {
 
     return new Promise((resolve, reject) => {
         const urlObj = new urlLib.URL(url);
-        if (urlObj.protocol !== 'http' && urlObj.protocol !== 'https') {
+        if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
             return reject(`Unsupported protocol ${urlObj.protocol}.`);
         }
 
-        const protocol = urlObj.protocol === 'http' ? http : https;
+        const protocol = urlObj.protocol === 'http:' ? http : https;
         protocol.get(url, { timeout }, (res) => {
             res.once('data', (chunk) => {
                 res.destroy();
