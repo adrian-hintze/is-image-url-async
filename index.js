@@ -2,17 +2,11 @@
 
 const http = require('http');
 const https = require('https');
-const path = require('path');
 const urlLib = require('url');
 const imageType = require('image-type');
-const isImage = require('is-image');
 const isUrl = require('is-url');
 
 function requestUrlAndLookForImageHeader(url, timeout) {
-    if (!timeout) {
-        timeout = 20*1000;
-    }
-
     return new Promise((resolve, reject) => {
         const urlObj = new urlLib.URL(url);
         if (urlObj.protocol !== 'http:' && urlObj.protocol !== 'https:') {
@@ -35,35 +29,17 @@ function requestUrlAndLookForImageHeader(url, timeout) {
     });
 }
 
-function isUrlAnImageUrl(url, timeout) {
-    return new Promise((resolve, reject) => {
-        const urlObj = new urlLib.URL(url);
-        const pathname = urlObj.pathname;
-        if (isImage(pathname)) {
-            const ext = path.extname(pathname).substring(1);
-            return resolve(ext);
-        }
+async function isImageUrl(url, timeout) {
+    if (!url) {
+        return;
+    }
 
-        requestUrlAndLookForImageHeader(url, timeout)
-            .then(result => resolve(result))
-            .catch(error => reject(error));
-    });
-}
+    if (!isUrl(url)) {
+        return;
+    }
 
-function isImageUrl(url, timeout) {
-    return new Promise((resolve, reject) => {
-        if (!url) {
-            return resolve();
-        }
-
-        if (!isUrl(url)) {
-            return resolve();
-        }
-
-        isUrlAnImageUrl(url, timeout)
-            .then(result => resolve(result))
-            .catch(error => reject(error));
-    });  
+    timeout = timeout ? timeout : 20*1000;
+    return await requestUrlAndLookForImageHeader(url, timeout);
 }
 
 module.exports = isImageUrl;
